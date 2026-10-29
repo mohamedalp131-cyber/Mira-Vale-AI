@@ -1,0 +1,197 @@
+name: Build Mira Vale APK
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⚙️ إعداد Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: ☕ إعداد Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 📦 تجهيز ملفات التطبيق والموقع
+        env:
+          HTML_CODE: |
+            <!DOCTYPE html>
+            <html dir="rtl" lang="ar">
+            <head>
+              <meta charset="utf-8"/>
+              <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+              <meta name="theme-color" content="#ac2471"/>
+              <title>Mira Vale AI - ميرا فالي</title>
+              <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+              <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+              <script src="https://cdn.tailwindcss.com"></script>
+              <script>
+                tailwind.config = {
+                  theme: {
+                    extend: {
+                      colors: {
+                        primary: "#ac2471",
+                        "primary-container": "#ff69b4",
+                        secondary: "#a43073",
+                        "secondary-container": "#fc79bd",
+                        surface: "#fff7f9",
+                        "surface-container": "#fbe9f4",
+                        "surface-container-low": "#ffeff8",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#221820",
+                        "on-surface-variant": "#564149"
+                      }
+                    }
+                  }
+                };
+              </script>
+              <style>
+                body { font-family: 'Noto Sans Arabic', sans-serif; -webkit-tap-highlight-color: transparent; }
+                .screen-view { display: none; }
+                .screen-view.active { display: flex; }
+              </style>
+            </head>
+            <body class="bg-surface text-on-surface min-h-screen flex flex-col">
+              <!-- Header -->
+              <header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm h-16 px-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <img class="w-10 h-10 rounded-full object-cover ring-2 ring-primary" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi9AByyGCBkoWMMPubxHisDvpNJHmP1Q0HwLfHUOj6kwT8JNnyTnbLBtxes99_L9BkFOFst3NQ2vQXwUkyLx6rvbo4ZcCDM8BrlNNSy9wjQsp3hz-pMrpyNwiOpSUkRotTS00Q9ZcTab_h2UUKNfgYtXXjezLTu9Ml5fM0y6E2rFqK5KQlBvg73n-3tNbX4lo2f3XPwCMA91ysLkgKQp1qql0_sIks1s97OkwMDt7hmWzgN1HnoeT32g"/>
+                  <div>
+                    <h1 class="text-sm font-bold text-primary">ميرا فالي 🎀</h1>
+                    <span class="text-[10px] text-gray-500">رفيقتك الذكية للأناقة</span>
+                  </div>
+                </div>
+              </header>
+
+              <!-- Main Content -->
+              <main class="flex-1 w-full pt-20 pb-24 px-4 max-w-md mx-auto">
+                <!-- Home Screen -->
+                <section id="screen-home" class="screen-view active flex-col space-y-4">
+                  <div class="p-5 rounded-3xl bg-gradient-to-br from-pink-50 to-pink-100 border border-pink-200 text-center shadow-sm">
+                    <img class="w-24 h-24 rounded-full mx-auto ring-4 ring-white shadow-md object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi9AByyGCBkoWMMPubxHisDvpNJHmP1Q0HwLfHUOj6kwT8JNnyTnbLBtxes99_L9BkFOFst3NQ2vQXwUkyLx6rvbo4ZcCDM8BrlNNSy9wjQsp3hz-pMrpyNwiOpSUkRotTS00Q9ZcTab_h2UUKNfgYtXXjezLTu9Ml5fM0y6E2rFqK5KQlBvg73n-3tNbX4lo2f3XPwCMA91ysLkgKQp1qql0_sIks1s97OkwMDt7hmWzgN1HnoeT32g"/>
+                    <h2 class="text-lg font-bold text-primary mt-3">أهلاً بكِ، أنا ميرا! ✨</h2>
+                    <p class="text-xs text-gray-600 mt-1">مستشارتك للأزياء والألوان والمحادثات اللطيفة 🌸</p>
+                    <button onclick="nav('chat')" class="mt-4 px-6 py-2 rounded-full bg-primary text-white text-xs font-bold shadow-md">ابدئي المحادثة الآن 💬</button>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div onclick="nav('wardrobe')" class="p-4 rounded-2xl bg-white shadow-sm border border-pink-100 flex flex-col items-center cursor-pointer">
+                      <span class="material-symbols-outlined text-primary text-3xl mb-1">styler</span>
+                      <span class="text-xs font-bold">خزانة الأزياء</span>
+                    </div>
+                    <div onclick="nav('gallery')" class="p-4 rounded-2xl bg-white shadow-sm border border-pink-100 flex flex-col items-center cursor-pointer">
+                      <span class="material-symbols-outlined text-primary text-3xl mb-1">photo_library</span>
+                      <span class="text-xs font-bold">ألبوم الصور</span>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Chat Screen -->
+                <section id="screen-chat" class="screen-view flex-col h-[75vh] justify-between">
+                  <div id="chatBox" class="flex-1 overflow-y-auto space-y-2 p-2">
+                    <div class="bg-white p-3 rounded-2xl max-w-[80%] text-xs shadow-sm border border-pink-50">
+                      مرحباً يا جميلة! 🌸 كيف أساعدكِ اليوم في اختيار إطلالتك؟
+                    </div>
+                  </div>
+                  <form onsubmit="sendMsg(event)" class="flex gap-2 pt-2">
+                    <input id="chatIn" type="text" placeholder="اكتبي رسالتكِ لميرا..." class="flex-1 px-4 py-2.5 rounded-full bg-white border border-pink-200 text-xs focus:outline-none"/>
+                    <button type="submit" class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-md">
+                      <span class="material-symbols-outlined text-sm rotate-180">send</span>
+                    </button>
+                  </form>
+                </section>
+
+                <!-- Wardrobe Screen -->
+                <section id="screen-wardrobe" class="screen-view flex-col space-y-3">
+                  <h3 class="font-bold text-sm text-primary">إطلالات مقترحة 👗</h3>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-pink-100">
+                      <img class="h-40 w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi2Co-WmSIbqM0JIpeHXzWcJCIi91rf50TM5jL9TqZ6o6yYSGzzvylFW3HpKsYxBN6kF-4B3Yim73Z09ex6ELHUqAyzKJRdgRyODr2ikfug8qlv6XBoURUMsyXCcrVZo00FsKJBx8GrYi9b48PqgOgqLLiGnJGHBFuvT7zb-hP3rVQ-srVb3ojJnBB6agOqejBJW92GmdmK1souTKNEDBpl3ogsVjkcQLLBRakvpjc"/>
+                      <div class="p-2 text-center text-xs font-bold">طقم وردي دانتيل</div>
+                    </div>
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-pink-100">
+                      <img class="h-40 w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnf7B1_XmyBEoJb9xtbWnoQF_foLC3JjwaQ2oVRWPIT3j3glQBIQpNtQ8kEKG5PPCGbACL-N-9z-Nh19uebuL0PWfuWVj1rg9li6_inOz2wRirHxgIOiooSKDynPPO_BgDT9OaGUF-t2F1V0ADp-Gh1kUzaCHWjpebJSOvMBQKfENjq4_2iM35yXWmNSxB8emWojh1bu9SmlcddWslW2aE50FSNpRzTsH9Rm4Uf_hk"/>
+                      <div class="p-2 text-center text-xs font-bold">كروب توب وبليسيه</div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Gallery Screen -->
+                <section id="screen-gallery" class="screen-view flex-col space-y-3">
+                  <h3 class="font-bold text-sm text-primary">جلسات التصوير 📸</h3>
+                  <div class="grid grid-cols-2 gap-3">
+                    <img class="rounded-2xl shadow-sm aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi9AByyGCBkoWMMPubxHisDvpNJHmP1Q0HwLfHUOj6kwT8JNnyTnbLBtxes99_L9BkFOFst3NQ2vQXwUkyLx6rvbo4ZcCDM8BrlNNSy9wjQsp3hz-pMrpyNwiOpSUkRotTS00Q9ZcTab_h2UUKNfgYtXXjezLTu9Ml5fM0y6E2rFqK5KQlBvg73n-3tNbX4lo2f3XPwCMA91ysLkgKQp1qql0_sIks1s97OkwMDt7hmWzgN1HnoeT32g"/>
+                    <img class="rounded-2xl shadow-sm aspect-square object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQIzm5uogqmlVBCU76Bi5Y9PXO7cfrYbFXkjO9DXbB-fN_1hCZk4NixkmhBO9xvFTUk3mFVnF3FYYG6NC7X9R3Ozpj_dMtV4WD9UMfzsDMSv9oGSy17uvJWP3LOwzt00CxAf2XMoSbTMM9PL0-o9JdtpRc0xoMKpY1dnstBfJyweReE2RtVYnpcBCg2QwIc46iiyPf3D9Jm-eCGKLwalFZMMfKajWwh_g06UnNAEAd"/>
+                  </div>
+                </section>
+              </main>
+
+              <!-- Bottom Nav -->
+              <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-md border-t border-pink-100 flex justify-around py-2.5">
+                <button onclick="nav('home')" class="flex flex-col items-center text-primary text-[10px]">
+                  <span class="material-symbols-outlined text-xl">home</span>الرئيسية
+                </button>
+                <button onclick="nav('chat')" class="flex flex-col items-center text-gray-400 text-[10px]">
+                  <span class="material-symbols-outlined text-xl">forum</span>المحادثة
+                </button>
+                <button onclick="nav('wardrobe')" class="flex flex-col items-center text-gray-400 text-[10px]">
+                  <span class="material-symbols-outlined text-xl">styler</span>الخزانة
+                </button>
+                <button onclick="nav('gallery')" class="flex flex-col items-center text-gray-400 text-[10px]">
+                  <span class="material-symbols-outlined text-xl">photo_library</span>الألبوم
+                </button>
+              </nav>
+
+              <script>
+                function nav(id) {
+                  document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+                  document.getElementById('screen-' + id).classList.add('active');
+                }
+                function sendMsg(e) {
+                  e.preventDefault();
+                  const input = document.getElementById('chatIn');
+                  const box = document.getElementById('chatBox');
+                  if(!input.value.trim()) return;
+                  box.innerHTML += `<div class="bg-primary text-white p-2.5 rounded-2xl max-w-[80%] self-end mr-auto text-xs">${input.value}</div>`;
+                  const val = input.value;
+                  input.value = '';
+                  setTimeout(() => {
+                    box.innerHTML += `<div class="bg-white p-2.5 rounded-2xl max-w-[80%] text-xs shadow-sm border border-pink-50">ذوقك رائع يا روحي! 🌸 يناسبك جداً إضافة لمسات وردية هادئة لإطلالتك اليوم ✨</div>`;
+                    box.scrollTop = box.scrollHeight;
+                  }, 600);
+                }
+              </script>
+            </body>
+            </html>
+        run: |
+          mkdir -p www
+          printf '%s' "$HTML_CODE" > www/index.html
+          echo '{"name": "mira-vale", "version": "1.0.0"}' > package.json
+          echo '{"appId": "com.miravale.app", "appName": "ميرا فالي", "webDir": "www"}' > capacitor.config.json
+
+      - name: 🚀 تثبيت الحزم وبناء مشروع أندرويد
+        run: |
+          npm install @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap add android
+          npx cap sync android
+
+      - name: 🔨 تجميع ملف الـ APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: 📥 رفع التطبيق جاهز للتحميل
+        uses: actions/upload-artifact@v4
+        with:
+          name: MiraVale-App
+          path: android/app/build/outputs/apk/debug/app-debug.apk
